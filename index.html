@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no,
+    initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <link href="https://cdn.bootcss.com/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <title>todoList清单应用</title>
+</head>
+<body>
+<div id="main">
+    <div class="nav-bar">
+        <h1>What do you want to do?</h1>
+    </div>
+    <div class="header">
+        Never put off till tomorrow what can be done today.
+    </div>
+    <form id="task-form" @submit.prevent="merge()">
+        <div class="wrap">
+                <div class="input-group">
+                    <input class="form-control" type="text" v-model="current.title" autocomplete="off"
+                           maxlength="17"
+                           placeholder="Please write down simply what you what to do...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" @click="toggle_isActive">...</button>
+                        <button type="submit" class="btn btn-default">submit</button>
+                    </span>
+                </div>
+                <div v-if='ok' class="detail">
+                        <textarea v-model="current.desc" placeholder="Please write down the description..." rows="4"
+                                  class="form-control"></textarea>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">提醒时间</span>
+                            <input v-model="current.alert_at" type="datetime-local"
+                                   class="time form-control">
+                        </div>
+                </div>
+        </div>
+    </form>
+    <div class="task-list">
+        <div class="wrap">
+            <task :todo="todo"
+                  v-if="!todo.completed"
+                  v-for="(todo, index) in list"
+                  :key = todo.id>
+            </task>
+        </div>
+    </div>
+    <div class="task-list">
+        <div class="wrap">
+            <div v-if="todo.completed" class="item complete" v-for="(todo, index) in list">
+                <button type="button" class="complete-btn btn btn-warning" @click="toggle_complete(todo.id)">BACK</button>
+                {{todo.title}}
+                <div class="btn-right">
+                    <button type="button" @click="remove(todo.id)" class="btn btn-danger">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<template id="task-tpl">
+    <div class="item incomplete">
+        <button type="button" class="incomplete-btn btn btn-success"
+                @click="action('toggle_complete', todo.id)"
+        >OK</button>
+        {{todo.title}}
+        <div class="btn-right">
+            <button type="button" @click="action('toggle_detail', todo.id)" class="btn btn-info">详情</button>
+            <button type="button" @click="action('set_current', todo)" class="btn btn-primary">更新</button>
+            <button type="button" @click="action('remove', todo.id)"  class="btn btn-danger">删除</button>
+        </div>
+        <div v-if="todo.show_detail" class="detailBottom well">
+            <div><span>详情：</span>{{todo.desc || '暂无详情'}}</div>
+            <div><span>提醒时间：</span>{{todo.alert_at || '未设置提醒时间'}}</div>
+        </div>
+    </div>
+</template>
+<script src="https://cdn.bootcss.com/vue/2.4.2/vue.js"></script>
+<script type="text/javascript" src="js/myStorage.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
